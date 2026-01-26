@@ -1,11 +1,29 @@
 name: capstone
 channels:
+  - apple
   - conda-forge
   - defaults
 dependencies:
   - python=3.10
-  - pandas
-  - librosa
-  # - pip
-  # - pip:
-  #   - lightgbm
+  - pip
+  - ffmpeg
+  - tensorflow-deps # [osx]
+
+  - pip:
+    # --- Mac (Apple Silicon) Specifics ---
+    - tensorflow-macos; platform_system == "Darwin" and platform_machine == "arm64"
+    - tensorflow-metal; platform_system == "Darwin" and platform_machine == "arm64"
+
+    # --- Linux Specifics ---
+    # Standard TensorFlow (includes GPU support on Linux if drivers are present)
+    - tensorflow; platform_system == "Linux"
+
+    # --- Shared Dependencies ---
+    - pandas
+    - numpy
+    - matplotlib
+    - librosa
+    - jupyter
+    - tensorflow-datasets
+    - pydub
+    - protobuf==3.20.3

@@ -17,6 +17,19 @@ The python/ directory serves as the "Golden Reference" for the machine learning 
 * `find_labels.py`: This is a utility script that lists all the possible labels in the original Speech Commands dataset. This is useful for understanding the full range of available commands and for mapping them to the simplified
     "Yes", "No", and "Unknown" classes used in this project.
 
+* `predict.py`: This script is used to make predictions on a single audio file. It loads the trained model (`kws_model.keras`) and preprocesses the audio file in the same way as the training script.
+    It takes an audio file as a command-line argument and outputs the predicted class and the confidence. It can also save a spectrogram of the audio file.
+
+    Usage (from the `python` directory):
+    ```
+    python3 predict.py <path_to_audio_file> [--save-spec]
+    ```
+
+* `python/audio`: This directory contains example audio files for testing the prediction script. All files are in 16kHz mono PCM `.wav` format.
+    * `yes.wav`
+    * `no.wav`
+    * `unknown.wav`
+
 
 
 # Conda Commands: #

@@ -29,5 +29,5 @@ log_mel = tf.math.log(mel_energies + 1e-6)
 # 7. Print Ground Truth
 print("--- PYTHON GROUND TRUTH ---")
 print("First 5 Log-Mel Values:")
-for i in range(5):
+for i in range(len(log_mel)):
     print(f"[{i}]: {log_mel[i]:.6f}")

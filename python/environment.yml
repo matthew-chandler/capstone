@@ -1,6 +1,5 @@
 name: capstone
 channels:
-  - apple
   - conda-forge
   - defaults
 dependencies:
@@ -11,7 +10,7 @@ dependencies:
     # --- Mac (Apple Silicon) Specifics ---
     - tensorflow-macos; platform_system == "Darwin" and platform_machine == "arm64"
     - tensorflow-metal; platform_system == "Darwin" and platform_machine == "arm64"
-    - tensorflow-deps; platform_system == "Darwin" and platform_machine == "arm64"
+    - tf-keras; platform_system == "Darwin" and platform_machine == "arm64"
 
     # --- Linux Specifics ---
     # Standard TensorFlow (includes GPU support on Linux if drivers are present)

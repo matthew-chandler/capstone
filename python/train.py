@@ -1,3 +1,5 @@
+import os
+os.environ["TF_USE_LEGACY_KERAS"] = "1"
 import tensorflow as tf
 import tensorflow_datasets as tfds
 import numpy as np
@@ -124,5 +126,6 @@ history = model.fit(
 )
 
 # --- 6. SAVE ---
-model.save("kws_model.keras")
+# model.save("kws_model.keras")
+model.save("kws_model.h5")  # file format that's compatible with stm32 xcubeai
 print("✅ Model saved to 'kws_model.keras'")

@@ -35,34 +35,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := FFT
+BUILD_ARTIFACT_NAME := capstone
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-FFT.elf \
+capstone.elf \
 
 MAP_FILES += \
-FFT.map \
+capstone.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-FFT.list \
+capstone.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: FFT.elf secondary-outputs
+main-build: capstone.elf secondary-outputs
 
 # Tool invocations
-FFT.elf FFT.map: $(OBJS) $(USER_OBJS) /Users/parth/STM32CubeIDE/workspace_1.19.0/FFT/STM32H743ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "FFT.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"/Users/parth/STM32CubeIDE/workspace_1.19.0/FFT/STM32H743ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="FFT.map" -Wl,--gc-sections -static -L"/Users/parth/STM32CubeIDE/workspace_1.19.0/FFT/Core/libs" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+capstone.elf capstone.map: $(OBJS) $(USER_OBJS) /Users/parth/Documents/vscode/capstone/stm/STM32H743ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "capstone.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"/Users/parth/Documents/vscode/capstone/stm/STM32H743ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="capstone.map" -Wl,--gc-sections -static -L"/Users/parth/Documents/vscode/capstone/stm/Core/libs" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -71,14 +71,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-FFT.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "FFT.list"
+capstone.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "capstone.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) FFT.elf FFT.list FFT.map default.size.stdout
+	-$(RM) capstone.elf capstone.list capstone.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)

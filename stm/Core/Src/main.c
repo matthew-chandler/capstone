@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include <arm_math.h>
 #include <stdio.h>
+#include "test_dsp.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -158,7 +159,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-asdf
+	  Init_Audio_Pipeline();
+	  Test_DSP_Pipeline();
 
 	  while (1) {
 

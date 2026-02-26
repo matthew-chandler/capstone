@@ -657,44 +657,44 @@
   ],
   "environment": {
     "generated_model": {
-      "generated_time": "2026-02-22T23:47:56-0800",
+      "generated_time": "2026-02-26T10:46:49-0800",
       "model_files": [
         {
           "name": "attempt1_data_params.h",
-          "signature": "0x4f22351439c2f1a4aa8c323f37327152"
+          "signature": "0x682f9e72a252891fe0496dd8f8ed7178"
         },
         {
           "name": "attempt1_data_params.c",
-          "signature": "0x13515c1a9e1ce9124330ec9ba961521b"
+          "signature": "0x008ff1af3b7e0d60f647243fc55465c4"
         },
         {
           "name": "attempt1_data.h",
-          "signature": "0x4cc8edecccd52dc95a0f0dbfc67e5425"
+          "signature": "0x1c4dcea4440f7fd6f0efe5f40ed742b5"
         },
         {
           "name": "attempt1_data.c",
-          "signature": "0xbdb0c41eb702d8996d1469834e2a2003"
+          "signature": "0x24a5a86ad7da084fe778d0449cbecddf"
         },
         {
           "name": "attempt1_config.h",
-          "signature": "0x26fd1eee76975069cdc4b8f64fd5b686"
+          "signature": "0x086eabd1941f76c6b783ad10ca001adb"
         },
         {
           "name": "attempt1.h",
-          "signature": "0x5655db0db97747fce72f532b4266ebbf"
+          "signature": "0xc6233f125c2671cbe11042d9954ea959"
         },
         {
           "name": "attempt1.c",
-          "signature": "0x0719afa5f97272ba9a6b40abaefd55a5"
+          "signature": "0x65f65601035ada317f494616683e8990"
         }
       ],
       "name": "attempt1"
     },
-    "network_signature": "0x4f26dc16e704484f",
+    "network_signature": "0xc5d1b42cf8786ef7",
     "test_name": "",
     "tools": [
       {
-        "arguments": "generate --target stm32h7 --name attempt1 -m /Users/parth/Documents/vscode/capstone/python/kws_model.tflite --compression none --verbosity 1 -O time --workspace /var/folders/qm/hpw_80pn1ql4sq_b0lxl9jwh0000gn/T/mxAI_workspace82810542102937513865490053429490148 --output /Users/parth/.stm32cubemx/attempt1_output",
+        "arguments": "analyze --target stm32h7 --name attempt1 -m /Users/parth/Documents/vscode/capstone/python/kws_model.tflite --compression none --verbosity 1 -O time --workspace /var/folders/qm/hpw_80pn1ql4sq_b0lxl9jwh0000gn/T/mxAI_workspace8916535702208751447098347879098171 --output /Users/parth/.stm32cubemx/attempt1_output",
         "environment": [
           "STATS_TYPE=X-CUBE-AI"
         ],

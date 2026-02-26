@@ -9,6 +9,7 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include X-CUBE-AI/App/subdir.mk
 -include Drivers/STM32H7xx_HAL_Driver/Src/subdir.mk
 -include Drivers/BSP/STM32H7xx_Nucleo/subdir.mk
 -include Core/Startup/subdir.mk
@@ -62,7 +63,7 @@ main-build: capstone.elf secondary-outputs
 
 # Tool invocations
 capstone.elf capstone.map: $(OBJS) $(USER_OBJS) /Users/parth/Documents/vscode/capstone/stm/STM32H743ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "capstone.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"/Users/parth/Documents/vscode/capstone/stm/STM32H743ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="capstone.map" -Wl,--gc-sections -static -L"/Users/parth/Documents/vscode/capstone/stm/Core/libs" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+	arm-none-eabi-gcc -o "capstone.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"/Users/parth/Documents/vscode/capstone/stm/STM32H743ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="capstone.map" -Wl,--gc-sections -static -L../Middlewares/ST/AI/Lib --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

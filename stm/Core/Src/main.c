@@ -24,6 +24,7 @@
 #include <arm_math.h>
 #include "dsp_pipeline.h"
 #include "cnn.h"
+#include "test_audio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -71,6 +72,8 @@ volatile uint8_t adc_buffer_filled = 0;
 //
 //float fft_2d_image[64][64*2];
 //float fft_2d_magnitude[64][64];
+
+extern float32_t full_audio[AUDIO_LENGTH];
 
 /* USER CODE END PV */
 
@@ -174,6 +177,11 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	  Init_Audio_Pipeline_Full();
 	  AI_Init();
+
+	  // copy over test array
+	  for(int i = 0; i < 16000; i++) {
+		full_audio[i] = TEST_AUDIO_UNKNOWN[i];
+	  }
 
 	  Process_Full_Audio();
 

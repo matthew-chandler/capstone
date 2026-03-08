@@ -29,35 +29,26 @@ AI_ALIGNED(32) static ai_u8 activations_buffer[AI_NETWORK_DATA_ACTIVATIONS_SIZE]
 
 // (Make sure your cnn_input_tensor from earlier is also declared here)
 extern float32_t cnn_input_tensor[NUM_FRAMES * NUM_MEL_BINS];
-
+ai_error err;
 
 void AI_Init(void) {
     ai_error err;
 
-    // 1. Create the AI network instance
-    err = ai_network_create(&network, AI_NETWORK_DATA_CONFIG);
+    // 1. Put our RAM pointer into an array format (which the ST helper function requires)
+    const ai_handle act_addr[] = { activations_buffer };
+
+    // 2. The ST Magic Helper Function
+    // This handles network creation, internal parameter binding, and initialization all at once!
+    // Passing NULL for the weights tells it to just use the default weights stored in Flash.
+    err = ai_network_create_and_init(&network, act_addr, NULL);
+
     if (err.type != AI_ERROR_NONE) {
-        printf("AI Init Error: Could not create network.\r\n");
+        printf("AI Init FAILED! Error Type: 0x%02X, Error Code: 0x%02X\r\n", err.type, err.code);
+        __NOP();
         while(1);
     }
 
-    // 2. Fetch the network parameter skeleton (NEW ST METHOD)
-    ai_network_params params;
-    if (!ai_network_data_params_get(&params)) {
-        printf("AI Init Error: Could not get network params.\r\n");
-        while(1);
-    }
-
-    // 3. Inject our newly allocated RAM buffer into the AI
-    params.activations.data = AI_HANDLE_PTR(activations_buffer);
-
-    // 4. Initialize the network
-    if (!ai_network_init(network, &params)) {
-        printf("AI Init Error: Could not initialize network.\r\n");
-        while(1);
-    }
-
-    // 5. Fetch the internal buffer structures dynamically
+    // 3. Fetch the internal buffer structures dynamically
     ai_input = ai_network_inputs_get(network, NULL);
     ai_output = ai_network_outputs_get(network, NULL);
 

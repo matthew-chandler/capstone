@@ -37,6 +37,7 @@
 #define ADC_BUF_LEN 1024
 #define ADC_TRANSIENT_LEN 32
 #define ARM_MATH_CM7
+#define __FPU_PRESENT 1
 #define FFT_LEN 1024
 #define SAMPLING_FREQ 48000
 #define DF_1024 (SAMPLING_FREQ / 1024)

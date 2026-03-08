@@ -5,8 +5,8 @@
  *      Author: parth
  */
 
-#ifndef INC_CONSTANTS_H_
-#define INC_CONSTANTS_H_
+#ifndef INC_MEL_CONSTANTS_H_
+#define INC_MEL_CONSTANTS_H_
 
 
 #include "main.h"
@@ -2143,4 +2143,4 @@ const float MEL_MATRIX[20520] = {
 };
 
 
-#endif /* INC_CONSTANTS_H_ */
+#endif /* INC_MEL_CONSTANTS_H_ */

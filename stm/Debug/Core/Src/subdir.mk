@@ -5,28 +5,31 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../Core/Src/cnn.c \
+../Core/Src/dsp_pipeline.c \
 ../Core/Src/main.c \
 ../Core/Src/stm32h7xx_hal_msp.c \
 ../Core/Src/stm32h7xx_it.c \
 ../Core/Src/sysmem.c \
-../Core/Src/system_stm32h7xx.c \
-../Core/Src/test_dsp.c 
+../Core/Src/system_stm32h7xx.c 
 
 OBJS += \
+./Core/Src/cnn.o \
+./Core/Src/dsp_pipeline.o \
 ./Core/Src/main.o \
 ./Core/Src/stm32h7xx_hal_msp.o \
 ./Core/Src/stm32h7xx_it.o \
 ./Core/Src/sysmem.o \
-./Core/Src/system_stm32h7xx.o \
-./Core/Src/test_dsp.o 
+./Core/Src/system_stm32h7xx.o 
 
 C_DEPS += \
+./Core/Src/cnn.d \
+./Core/Src/dsp_pipeline.d \
 ./Core/Src/main.d \
 ./Core/Src/stm32h7xx_hal_msp.d \
 ./Core/Src/stm32h7xx_it.d \
 ./Core/Src/sysmem.d \
-./Core/Src/system_stm32h7xx.d \
-./Core/Src/test_dsp.d 
+./Core/Src/system_stm32h7xx.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -36,7 +39,7 @@ Core/Src/%.o Core/Src/%.su Core/Src/%.cyclo: ../Core/Src/%.c Core/Src/subdir.mk
 clean: clean-Core-2f-Src
 
 clean-Core-2f-Src:
-	-$(RM) ./Core/Src/main.cyclo ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/stm32h7xx_hal_msp.cyclo ./Core/Src/stm32h7xx_hal_msp.d ./Core/Src/stm32h7xx_hal_msp.o ./Core/Src/stm32h7xx_hal_msp.su ./Core/Src/stm32h7xx_it.cyclo ./Core/Src/stm32h7xx_it.d ./Core/Src/stm32h7xx_it.o ./Core/Src/stm32h7xx_it.su ./Core/Src/sysmem.cyclo ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32h7xx.cyclo ./Core/Src/system_stm32h7xx.d ./Core/Src/system_stm32h7xx.o ./Core/Src/system_stm32h7xx.su ./Core/Src/test_dsp.cyclo ./Core/Src/test_dsp.d ./Core/Src/test_dsp.o ./Core/Src/test_dsp.su
+	-$(RM) ./Core/Src/cnn.cyclo ./Core/Src/cnn.d ./Core/Src/cnn.o ./Core/Src/cnn.su ./Core/Src/dsp_pipeline.cyclo ./Core/Src/dsp_pipeline.d ./Core/Src/dsp_pipeline.o ./Core/Src/dsp_pipeline.su ./Core/Src/main.cyclo ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/stm32h7xx_hal_msp.cyclo ./Core/Src/stm32h7xx_hal_msp.d ./Core/Src/stm32h7xx_hal_msp.o ./Core/Src/stm32h7xx_hal_msp.su ./Core/Src/stm32h7xx_it.cyclo ./Core/Src/stm32h7xx_it.d ./Core/Src/stm32h7xx_it.o ./Core/Src/stm32h7xx_it.su ./Core/Src/sysmem.cyclo ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32h7xx.cyclo ./Core/Src/system_stm32h7xx.d ./Core/Src/system_stm32h7xx.o ./Core/Src/system_stm32h7xx.su
 
 .PHONY: clean-Core-2f-Src
 

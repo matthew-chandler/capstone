@@ -1,0 +1,2 @@
+../Core/Src/dsp_pipeline.c:31:6:Init_Audio_Pipeline_Full	3
+../Core/Src/dsp_pipeline.c:43:6:Process_Full_Audio	6

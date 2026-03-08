@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * @file    attempt1.h
+  * @file    network.h
   * @author  AST Embedded Analytics Research Platform
-  * @date    2026-03-07T15:40:32-0800
+  * @date    2026-03-07T15:56:15-0800
   * @brief   AI Tool Automatic Code Generator for Embedded NN computing
   ******************************************************************************
   * @attention
@@ -15,67 +15,67 @@
   * If no LICENSE file comes with this software, it is provided AS-IS.
   ******************************************************************************
   */
-#ifndef AI_ATTEMPT1_H
-#define AI_ATTEMPT1_H
+#ifndef AI_NETWORK_H
+#define AI_NETWORK_H
 
-#include "attempt1_config.h"
+#include "network_config.h"
 #include "ai_platform.h"
 
 /******************************************************************************/
-#define AI_ATTEMPT1_MODEL_NAME          "attempt1"
-#define AI_ATTEMPT1_ORIGIN_MODEL_NAME   "kws_model"
+#define AI_NETWORK_MODEL_NAME          "network"
+#define AI_NETWORK_ORIGIN_MODEL_NAME   "kws_model"
 
 /******************************************************************************/
-#define AI_ATTEMPT1_ACTIVATIONS_ALIGNMENT   (4)
-#define AI_ATTEMPT1_INPUTS_IN_ACTIVATIONS   (4)
-#define AI_ATTEMPT1_OUTPUTS_IN_ACTIVATIONS  (4)
+#define AI_NETWORK_ACTIVATIONS_ALIGNMENT   (4)
+#define AI_NETWORK_INPUTS_IN_ACTIVATIONS   (4)
+#define AI_NETWORK_OUTPUTS_IN_ACTIVATIONS  (4)
 
 /******************************************************************************/
-#define AI_ATTEMPT1_IN_NUM        (1)
+#define AI_NETWORK_IN_NUM        (1)
 
 AI_DEPRECATED
-#define AI_ATTEMPT1_IN \
-  ai_attempt1_inputs_get(AI_HANDLE_NULL, NULL)
+#define AI_NETWORK_IN \
+  ai_network_inputs_get(AI_HANDLE_NULL, NULL)
 
-#define AI_ATTEMPT1_IN_SIZE { \
-  AI_ATTEMPT1_IN_1_SIZE, \
+#define AI_NETWORK_IN_SIZE { \
+  AI_NETWORK_IN_1_SIZE, \
 }
-#define AI_ATTEMPT1_IN_SIZE_BYTES { \
-  AI_ATTEMPT1_IN_1_SIZE_BYTES, \
+#define AI_NETWORK_IN_SIZE_BYTES { \
+  AI_NETWORK_IN_1_SIZE_BYTES, \
 }
-#define AI_ATTEMPT1_IN_1_FORMAT      (AI_BUFFER_FORMAT_FLOAT)
-#define AI_ATTEMPT1_IN_1_HEIGHT      (49)
-#define AI_ATTEMPT1_IN_1_WIDTH       (40)
-#define AI_ATTEMPT1_IN_1_CHANNEL     (1)
-#define AI_ATTEMPT1_IN_1_SIZE        (1960)
-#define AI_ATTEMPT1_IN_1_SIZE_BYTES  (7840)
+#define AI_NETWORK_IN_1_FORMAT      (AI_BUFFER_FORMAT_FLOAT)
+#define AI_NETWORK_IN_1_HEIGHT      (49)
+#define AI_NETWORK_IN_1_WIDTH       (40)
+#define AI_NETWORK_IN_1_CHANNEL     (1)
+#define AI_NETWORK_IN_1_SIZE        (1960)
+#define AI_NETWORK_IN_1_SIZE_BYTES  (7840)
 
 /******************************************************************************/
-#define AI_ATTEMPT1_OUT_NUM       (1)
+#define AI_NETWORK_OUT_NUM       (1)
 
 AI_DEPRECATED
-#define AI_ATTEMPT1_OUT \
-  ai_attempt1_outputs_get(AI_HANDLE_NULL, NULL)
+#define AI_NETWORK_OUT \
+  ai_network_outputs_get(AI_HANDLE_NULL, NULL)
 
-#define AI_ATTEMPT1_OUT_SIZE { \
-  AI_ATTEMPT1_OUT_1_SIZE, \
+#define AI_NETWORK_OUT_SIZE { \
+  AI_NETWORK_OUT_1_SIZE, \
 }
-#define AI_ATTEMPT1_OUT_SIZE_BYTES { \
-  AI_ATTEMPT1_OUT_1_SIZE_BYTES, \
+#define AI_NETWORK_OUT_SIZE_BYTES { \
+  AI_NETWORK_OUT_1_SIZE_BYTES, \
 }
-#define AI_ATTEMPT1_OUT_1_FORMAT      (AI_BUFFER_FORMAT_FLOAT)
-#define AI_ATTEMPT1_OUT_1_CHANNEL     (3)
-#define AI_ATTEMPT1_OUT_1_SIZE        (3)
-#define AI_ATTEMPT1_OUT_1_SIZE_BYTES  (12)
+#define AI_NETWORK_OUT_1_FORMAT      (AI_BUFFER_FORMAT_FLOAT)
+#define AI_NETWORK_OUT_1_CHANNEL     (3)
+#define AI_NETWORK_OUT_1_SIZE        (3)
+#define AI_NETWORK_OUT_1_SIZE_BYTES  (12)
 
 /******************************************************************************/
-#define AI_ATTEMPT1_N_NODES (11)
+#define AI_NETWORK_N_NODES (11)
 
 
 AI_API_DECLARE_BEGIN
 
 /*!
- * @defgroup attempt1
+ * @defgroup network
  * @brief Public neural network APIs
  * @details This is the header for the network public APIs declarations
  * for interfacing a generated network model.
@@ -94,7 +94,7 @@ AI_API_DECLARE_BEGIN
 
 /*!
  * @brief Get network library info as a datastruct.
- * @ingroup attempt1
+ * @ingroup network
  * @param[in] network: the handler to the network context
  * @param[out] report a pointer to the report struct where to
  * store network info. See @ref ai_network_report struct for details
@@ -102,27 +102,27 @@ AI_API_DECLARE_BEGIN
  */
 AI_DEPRECATED
 AI_API_ENTRY
-ai_bool ai_attempt1_get_info(
+ai_bool ai_network_get_info(
   ai_handle network, ai_network_report* report);
 
 
 
 /*!
  * @brief Get network library report as a datastruct.
- * @ingroup attempt1
+ * @ingroup network
  * @param[in] network: the handler to the network context
  * @param[out] report a pointer to the report struct where to
  * store network info. See @ref ai_network_report struct for details
  * @return a boolean reporting the exit status of the API
  */
 AI_API_ENTRY
-ai_bool ai_attempt1_get_report(
+ai_bool ai_network_get_report(
   ai_handle network, ai_network_report* report);
 
 
 /*!
  * @brief Get first network error code.
- * @ingroup attempt1
+ * @ingroup network
  * @details Get an error code related to the 1st error generated during
  * network processing. The error code is structure containing an 
  * error type indicating the type of error with an associated error code
@@ -132,12 +132,12 @@ ai_bool ai_attempt1_get_report(
  * see @ref ai_error for struct definition
  */
 AI_API_ENTRY
-ai_error ai_attempt1_get_error(ai_handle network);
+ai_error ai_network_get_error(ai_handle network);
 
 
 /*!
  * @brief Create a neural network.
- * @ingroup attempt1
+ * @ingroup network
  * @details Instantiate a network and returns an object to handle it;
  * @param network an opaque handle to the network context
  * @param network_config a pointer to the network configuration info coded as a 
@@ -145,13 +145,13 @@ ai_error ai_attempt1_get_error(ai_handle network);
  * @return an error code reporting the status of the API on exit
  */
 AI_API_ENTRY
-ai_error ai_attempt1_create(
+ai_error ai_network_create(
   ai_handle* network, const ai_buffer* network_config);
 
 
 /*!
  * @brief Destroy a neural network and frees the allocated memory.
- * @ingroup attempt1
+ * @ingroup network
  * @details Destroys the network and frees its memory. The network handle is returned;
  * if the handle is not NULL, the unloading has not been successful.
  * @param network an opaque handle to the network context
@@ -159,14 +159,14 @@ ai_error ai_attempt1_create(
  * correctly. The same input network handle if destroy failed.
  */
 AI_API_ENTRY
-ai_handle ai_attempt1_destroy(ai_handle network);
+ai_handle ai_network_destroy(ai_handle network);
 
 
 /*!
  * @brief Initialize the data structures of the network.
- * @ingroup attempt1
+ * @ingroup network
  * @details This API initialized the network after a successfull
- * @ref ai_attempt1_create. Both the activations memory buffer 
+ * @ref ai_network_create. Both the activations memory buffer 
  * and params (i.e. weights) need to be provided by caller application
  * 
  * @param network an opaque handle to the network context
@@ -174,16 +174,16 @@ ai_handle ai_attempt1_destroy(ai_handle network);
  * see @ref ai_network_params struct for details
  * @return true if the network was correctly initialized, false otherwise
  * in case of error the error type could be queried by 
- * using @ref ai_attempt1_get_error
+ * using @ref ai_network_get_error
  */
 AI_API_ENTRY
-ai_bool ai_attempt1_init(
+ai_bool ai_network_init(
   ai_handle network, const ai_network_params* params);
 
 
 /*!
  * @brief Create and initialize a neural network (helper function)
- * @ingroup attempt1
+ * @ingroup network
  * @details Helper function to instantiate and to initialize a network. It returns an object to handle it;
  * @param network an opaque handle to the network context
  * @param activations array of addresses of the activations buffers
@@ -191,58 +191,58 @@ ai_bool ai_attempt1_init(
  * @return an error code reporting the status of the API on exit
  */
 AI_API_ENTRY
-ai_error ai_attempt1_create_and_init(
+ai_error ai_network_create_and_init(
   ai_handle* network, const ai_handle activations[], const ai_handle weights[]);
 
 
 /*!
  * @brief Get network inputs array pointer as a ai_buffer array pointer.
- * @ingroup attempt1
+ * @ingroup network
  * @param network an opaque handle to the network context
  * @param n_buffer optional parameter to return the number of outputs
  * @return a ai_buffer pointer to the inputs arrays
  */
 AI_API_ENTRY
-ai_buffer* ai_attempt1_inputs_get(
+ai_buffer* ai_network_inputs_get(
   ai_handle network, ai_u16 *n_buffer);
 
 
 /*!
  * @brief Get network outputs array pointer as a ai_buffer array pointer.
- * @ingroup attempt1
+ * @ingroup network
  * @param network an opaque handle to the network context
  * @param n_buffer optional parameter to return the number of outputs
  * @return a ai_buffer pointer to the outputs arrays
  */
 AI_API_ENTRY
-ai_buffer* ai_attempt1_outputs_get(
+ai_buffer* ai_network_outputs_get(
   ai_handle network, ai_u16 *n_buffer);
 
 
 /*!
  * @brief Run the network and return the output
- * @ingroup attempt1
+ * @ingroup network
  *
  * @details Runs the network on the inputs and returns the corresponding output.
  * The size of the input and output buffers is stored in this
- * header generated by the code generation tool. See AI_ATTEMPT1_*
- * defines into file @ref attempt1.h for all network sizes defines
+ * header generated by the code generation tool. See AI_NETWORK_*
+ * defines into file @ref network.h for all network sizes defines
  *
  * @param network an opaque handle to the network context
  * @param[in] input buffer with the input data
  * @param[out] output buffer with the output data
  * @return the number of input batches processed (default 1) or <= 0 if it fails
  * in case of error the error type could be queried by 
- * using @ref ai_attempt1_get_error
+ * using @ref ai_network_get_error
  */
 AI_API_ENTRY
-ai_i32 ai_attempt1_run(
+ai_i32 ai_network_run(
   ai_handle network, const ai_buffer* input, ai_buffer* output);
 
 
 /*!
  * @brief Runs the network on the inputs.
- * @ingroup attempt1
+ * @ingroup network
  *
  * @details Differently from @ref ai_network_run, no output is returned, e.g. for
  * temporal models with a fixed step size.
@@ -251,12 +251,12 @@ ai_i32 ai_attempt1_run(
  * @param[in] input buffer with the input data
  * @return the number of input batches processed (usually 1) or <= 0 if it fails
  * in case of error the error type could be queried by 
- * using @ref ai_attempt1_get_error
+ * using @ref ai_network_get_error
  */
 AI_API_ENTRY
-ai_i32 ai_attempt1_forward(
+ai_i32 ai_network_forward(
   ai_handle network, const ai_buffer* input);
 
 AI_API_DECLARE_END
 
-#endif /* AI_ATTEMPT1_H */
+#endif /* AI_NETWORK_H */

@@ -1,30 +1,30 @@
 ST Edge AI Core v2.2.0-20266 2adc00962
-Created date          : 2026-03-07 15:40:34
-Parameters            : generate --target stm32h7 --name attempt1 -m /Users/parth/Documents/vscode/capstone/python/kws_model.tflite --compression none --verbosity 1 -O time --workspace /var/folders/qm/hpw_80pn1ql4sq_b0lxl9jwh0000gn/T/mxAI_workspace9284359166795810217277097557029348 --output /Users/parth/.stm32cubemx/attempt1_output
+Created date          : 2026-03-07 15:56:16
+Parameters            : generate --target stm32h7 --name network -m /Users/parth/Documents/vscode/capstone/python/kws_model.tflite --compression none --verbosity 1 -O time --workspace /var/folders/qm/hpw_80pn1ql4sq_b0lxl9jwh0000gn/T/mxAI_workspace937940872645419609946662340338842 --output /Users/parth/.stm32cubemx/network_output
 
 Exec/report summary (generate)
----------------------------------------------------------------------------------------------------------------------------
-model file         :   /Users/parth/Documents/vscode/capstone/python/kws_model.tflite                                      
-type               :   tflite                                                                                              
-c_name             :   attempt1                                                                                            
-compression        :   none                                                                                                
-options            :   allocate-inputs, allocate-outputs                                                                   
-optimization       :   time                                                                                                
-target/series      :   stm32h7                                                                                             
-workspace dir      :   /var/folders/qm/hpw_80pn1ql4sq_b0lxl9jwh0000gn/T/mxAI_workspace9284359166795810217277097557029348   
-output dir         :   /Users/parth/.stm32cubemx/attempt1_output                                                           
-model_fmt          :   float                                                                                               
-model_name         :   kws_model                                                                                           
-model_hash         :   0xa8678887f25721fff3b72cfa7a5a1afc                                                                  
-params #           :   314,243 items (1.20 MiB)                                                                            
----------------------------------------------------------------------------------------------------------------------------
-input 1/1          :   'serving_default_input_10', f32(1x49x40x1), 7.66 KBytes, activations                                
-output 1/1         :   'nl_8', f32(1x3), 12 Bytes, activations                                                             
-macc               :   3,751,632                                                                                           
-weights (ro)       :   1,256,972 B (1.20 MiB) (1 segment)                                                                  
-activations (rw)   :   119,332 B (116.54 KiB) (1 segment) *                                                                
-ram (total)        :   119,332 B (116.54 KiB) = 119,332 + 0 + 0                                                            
----------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
+model file         :   /Users/parth/Documents/vscode/capstone/python/kws_model.tflite                                     
+type               :   tflite                                                                                             
+c_name             :   network                                                                                            
+compression        :   none                                                                                               
+options            :   allocate-inputs, allocate-outputs                                                                  
+optimization       :   time                                                                                               
+target/series      :   stm32h7                                                                                            
+workspace dir      :   /var/folders/qm/hpw_80pn1ql4sq_b0lxl9jwh0000gn/T/mxAI_workspace937940872645419609946662340338842   
+output dir         :   /Users/parth/.stm32cubemx/network_output                                                           
+model_fmt          :   float                                                                                              
+model_name         :   kws_model                                                                                          
+model_hash         :   0xa8678887f25721fff3b72cfa7a5a1afc                                                                 
+params #           :   314,243 items (1.20 MiB)                                                                           
+--------------------------------------------------------------------------------------------------------------------------
+input 1/1          :   'serving_default_input_10', f32(1x49x40x1), 7.66 KBytes, activations                               
+output 1/1         :   'nl_8', f32(1x3), 12 Bytes, activations                                                            
+macc               :   3,751,632                                                                                          
+weights (ro)       :   1,256,972 B (1.20 MiB) (1 segment)                                                                 
+activations (rw)   :   119,332 B (116.54 KiB) (1 segment) *                                                               
+ram (total)        :   119,332 B (116.54 KiB) = 119,332 + 0 + 0                                                           
+--------------------------------------------------------------------------------------------------------------------------
 (*) 'input'/'output' buffers are allocated in the activations buffer
 
 Model name - kws_model
@@ -68,7 +68,7 @@ model/c-model: macc=3,751,632/3,751,632  weights=1,256,972/1,256,972  activation
 Generated C-graph summary
 ------------------------------------------------------------------------------------------------------------------------
 model name            : kws_model
-c-name                : attempt1
+c-name                : network
 c-node #              : 11
 c-array #             : 22
 activations size      : 119332 (1 segment)
@@ -200,8 +200,8 @@ macc=3,751,632 weights=1,256,972 act=119,332 ram_io=0
  module                             text      rodata    data       bss 
  ------------------------------ -------- ----------- ------- --------- 
  NetworkRuntime1020_CM7_GCC.a     13,192           0       0         0 
- attempt1.o                          696         120   3,100       240 
- attempt1_data.o                      48          16      88         0 
+ network.o                           696         120   3,100       240 
+ network_data.o                       48          16      88         0 
  lib (toolchain)*                    318         328       0         0 
  ------------------------------ -------- ----------- ------- --------- 
  RT total**                       14,254         464   3,188       240 
@@ -227,11 +227,11 @@ macc=3,751,632 weights=1,256,972 act=119,332 ram_io=0
 
 
 Generated files (7)
------------------------------------------------------------------- 
-/Users/parth/.stm32cubemx/attempt1_output/attempt1_data_params.h   
-/Users/parth/.stm32cubemx/attempt1_output/attempt1_data_params.c   
-/Users/parth/.stm32cubemx/attempt1_output/attempt1_data.h          
-/Users/parth/.stm32cubemx/attempt1_output/attempt1_data.c          
-/Users/parth/.stm32cubemx/attempt1_output/attempt1_config.h        
-/Users/parth/.stm32cubemx/attempt1_output/attempt1.h               
-/Users/parth/.stm32cubemx/attempt1_output/attempt1.c               
+---------------------------------------------------------------- 
+/Users/parth/.stm32cubemx/network_output/network_data_params.h   
+/Users/parth/.stm32cubemx/network_output/network_data_params.c   
+/Users/parth/.stm32cubemx/network_output/network_data.h          
+/Users/parth/.stm32cubemx/network_output/network_data.c          
+/Users/parth/.stm32cubemx/network_output/network_config.h        
+/Users/parth/.stm32cubemx/network_output/network.h               
+/Users/parth/.stm32cubemx/network_output/network.c               

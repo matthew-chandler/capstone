@@ -1,0 +1,2 @@
+../Core/Src/cnn.c:34:6:AI_Init	4
+../Core/Src/cnn.c:68:6:Run_AI_Inference	2

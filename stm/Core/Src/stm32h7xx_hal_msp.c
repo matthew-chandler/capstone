@@ -96,14 +96,14 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_ADC;
-    PeriphClkInitStruct.PLL2.PLL2M = 4;
-    PeriphClkInitStruct.PLL2.PLL2N = 10;
+    PeriphClkInitStruct.PLL2.PLL2M = 1;
+    PeriphClkInitStruct.PLL2.PLL2N = 19;
     PeriphClkInitStruct.PLL2.PLL2P = 2;
     PeriphClkInitStruct.PLL2.PLL2Q = 2;
     PeriphClkInitStruct.PLL2.PLL2R = 2;
     PeriphClkInitStruct.PLL2.PLL2RGE = RCC_PLL2VCIRANGE_3;
     PeriphClkInitStruct.PLL2.PLL2VCOSEL = RCC_PLL2VCOMEDIUM;
-    PeriphClkInitStruct.PLL2.PLL2FRACN = 0;
+    PeriphClkInitStruct.PLL2.PLL2FRACN = 0.0;
     PeriphClkInitStruct.AdcClockSelection = RCC_ADCCLKSOURCE_PLL2;
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
     {
@@ -175,6 +175,51 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
     /* USER CODE BEGIN ADC1_MspDeInit 1 */
 
     /* USER CODE END ADC1_MspDeInit 1 */
+  }
+
+}
+
+/**
+  * @brief CRC MSP Initialization
+  * This function configures the hardware resources used in this example
+  * @param hcrc: CRC handle pointer
+  * @retval None
+  */
+void HAL_CRC_MspInit(CRC_HandleTypeDef* hcrc)
+{
+  if(hcrc->Instance==CRC)
+  {
+    /* USER CODE BEGIN CRC_MspInit 0 */
+
+    /* USER CODE END CRC_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_CRC_CLK_ENABLE();
+    /* USER CODE BEGIN CRC_MspInit 1 */
+
+    /* USER CODE END CRC_MspInit 1 */
+
+  }
+
+}
+
+/**
+  * @brief CRC MSP De-Initialization
+  * This function freeze the hardware resources used in this example
+  * @param hcrc: CRC handle pointer
+  * @retval None
+  */
+void HAL_CRC_MspDeInit(CRC_HandleTypeDef* hcrc)
+{
+  if(hcrc->Instance==CRC)
+  {
+    /* USER CODE BEGIN CRC_MspDeInit 0 */
+
+    /* USER CODE END CRC_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_CRC_CLK_DISABLE();
+    /* USER CODE BEGIN CRC_MspDeInit 1 */
+
+    /* USER CODE END CRC_MspDeInit 1 */
   }
 
 }

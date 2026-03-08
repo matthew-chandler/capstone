@@ -1,9 +1,9 @@
 
 /**
   ******************************************************************************
-  * @file    attempt1_config.h
+  * @file    network_config.h
   * @author  AST Embedded Analytics Research Platform
-  * @date    2026-03-07T15:40:32-0800
+  * @date    2026-03-07T15:56:15-0800
   * @brief   AI Tool Automatic Code Generator for Custom Layers Implementation
   ******************************************************************************
   * @attention
@@ -17,8 +17,8 @@
   ******************************************************************************
   */
 
-#ifndef AI_ATTEMPT1_CONFIG_H
-#define AI_ATTEMPT1_CONFIG_H
+#ifndef AI_NETWORK_CONFIG_H
+#define AI_NETWORK_CONFIG_H
 
 #undef AI_TOOLS_VERSION_MAJOR
 #undef AI_TOOLS_VERSION_MINOR
@@ -43,4 +43,4 @@
 #define AI_TOOLS_API_VERSION_MINOR (5)
 #define AI_TOOLS_API_VERSION_MICRO (0)
 
-#endif /*AI_ATTEMPT1_CONFIG_H*/
+#endif /*AI_NETWORK_CONFIG_H*/

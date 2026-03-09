@@ -206,6 +206,27 @@ int main(void)
 
 		  Process_Full_Audio();
 		  Run_AI_Inference();
+
+		  // Handle LED blinking based on inference result
+		  // ai_out_data format: [0]=Yes, [1]=No, [2]=Unknown
+		  extern float32_t ai_out_data[3];
+
+		  if (ai_out_data[0] > 0.3f) { // High confidence for Yes
+			  BSP_LED_On(LED_GREEN);
+			  HAL_Delay(1000);
+			  BSP_LED_Off(LED_GREEN);
+		  } else if (ai_out_data[1] > 0.3f) { // High confidence for No
+			  BSP_LED_On(LED_RED);
+			  HAL_Delay(1000);
+			  BSP_LED_Off(LED_RED);
+		  } else {
+			  // Unknown or low confidence, maybe blink both quickly to indicate processing finished
+			  BSP_LED_On(LED_GREEN);
+			  BSP_LED_On(LED_RED);
+			  HAL_Delay(250);
+			  BSP_LED_Off(LED_GREEN);
+			  BSP_LED_Off(LED_RED);
+		  }
 	  }
   }
   /* USER CODE END 3 */

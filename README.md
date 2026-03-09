@@ -60,8 +60,9 @@ The project is built around the STM32H7 Nucleo board and utilizes several built-
 * **USER Button (PC13 / EXTI13)**: Used to trigger the 1-second audio recording sequence.
 * **Status LEDs**: 
   * **YELLOW LED (PB0 / LD1)**: Turns on while the microphone is actively recording audio.
-  * **GREEN LED (PB14 / LD3)**: (Available for inference prediction status, e.g., "Yes").
-  * **RED LED (PE1 / LD2)**: (Available for inference prediction status, e.g., "No" or Error).
+  * **GREEN LED (PB14 / LD3)**: Blinks for 1 second when the CNN predicts the keyword **"Yes"** (Confidence > 30%).
+  * **RED LED (PE1 / LD2)**: Blinks for 1 second when the CNN predicts the keyword **"No"** (Confidence > 30%).
+  * **GREEN & RED LED**: Both blink quickly for 0.25 seconds when the command is "Unknown" or the confidence is too low.
 
 ## Audio Input Specifications
 To match the Google Speech Commands dataset used during training, the hardware must collect audio under the exact same specifications:

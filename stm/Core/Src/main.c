@@ -63,6 +63,8 @@ TIM_HandleTypeDef htim1;
 //float v_print = 0.0;
 //volatile uint16_t adc_buffer[ADC_BUF_LEN];
 volatile uint8_t adc_buffer_filled = 0;
+volatile uint8_t button_pressed = 0;
+uint16_t record_buffer[16000];
 //float complex_array[ADC_BUF_LEN * 2];
 //float complex_array_256[256 * 2];
 //float complex_array_odd[ADC_BUF_LEN * 2];
@@ -146,6 +148,8 @@ int main(void)
 
   HAL_TIM_Base_Start(&htim1);
 
+  Init_Audio_Pipeline_Full();
+  AI_Init();
 
   /* USER CODE END 2 */
 
@@ -175,20 +179,33 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  Init_Audio_Pipeline_Full();
-	  AI_Init();
+	  if (button_pressed) {
+		  button_pressed = 0;
 
-	  // copy over test array
-	  for(int i = 0; i < 16000; i++) {
-		full_audio[i] = TEST_AUDIO_UNKNOWN[i];
-	  }
+		  // Turn on LED to indicate recording started
+		  BSP_LED_On(LED_YELLOW);
 
-	  Process_Full_Audio();
+		  // Reset flag and start DMA recording
+		  adc_buffer_filled = 0;
+		  if (HAL_ADC_Start_DMA(&hadc1, (uint32_t*)record_buffer, 16000) != HAL_OK) {
+			  Error_Handler();
+		  }
 
-	  Run_AI_Inference();
+		  // Wait for recording to finish
+		  while (!adc_buffer_filled) {
+			  // Wait for DMA complete callback
+		  }
 
-	  while (1) {
+		  // Turn off LED to indicate recording end
+		  BSP_LED_Off(LED_YELLOW);
 
+		  // Prepare the buffer for the ML pipeline
+		  for (int i = 0; i < 16000; i++) {
+			  full_audio[i] = (float32_t)record_buffer[i];
+		  }
+
+		  Process_Full_Audio();
+		  Run_AI_Inference();
 	  }
   }
   /* USER CODE END 3 */
@@ -482,6 +499,13 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
     }
 
     adc_buffer_filled = 1;
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if (GPIO_Pin == GPIO_PIN_13) {
+        button_pressed = 1;
+    }
 }
 
 int _write(int file, char *ptr, int len)

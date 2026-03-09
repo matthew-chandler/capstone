@@ -43,3 +43,29 @@ The python/ directory serves as the "Golden Reference" for the machine learning 
 ```conda env update --file python/environment.yml --prune```
 * Updating the environment file to match the current environment (please avoid this, apparently it can mess up the environment file):
 ```conda env export > python/environment_updated.yml```
+
+# STM32 Hardware Implementation
+
+The `stm/` directory contains the embedded C code that runs on the STM32H7 microcontroller. This handles real-time audio acquisition, DMA transfers, DSP for MFCC feature extraction, and neural network inference using X-Cube-AI.
+
+## Key Files
+* `stm/Core/Src/main.c`: The central application loop. It initializes the microcontroller peripherals (ADC, Timers, DMA, GPIO) and waits for user input. Upon pressing the USER button, it triggers the ADC to record 1 second (16,000 samples) of audio data into a buffer. Once recording is complete, it hands the buffer off to the DSP pipeline and then inference.
+* `stm/Core/Src/dsp_pipeline.c` (Expected): Responsible for converting raw 16-bit PCM audio samples into the Log-Mel-Spectrogram (MFCCs) features that match the Python "Golden Reference".
+* `stm/Core/Src/cnn.c` (Expected): Handles the initialization, memory allocation, and execution of the quantized X-Cube-AI neural network model.
+* `stm/Core/Src/test_audio.h`: Contains hardcoded, pre-recorded audio arrays (like `TEST_AUDIO_UNKNOWN`) used to validate the DSP and inference pipelines without needing a live microphone.
+
+## Hardware Wiring and GPIO Configuration
+The project is built around the STM32H7 Nucleo board and utilizes several built-in peripherals:
+
+* **USER Button (PC13 / EXTI13)**: Used to trigger the 1-second audio recording sequence.
+* **Status LEDs**: 
+  * **YELLOW LED (PB0 / LD1)**: Turns on while the microphone is actively recording audio.
+  * **GREEN LED (PB14 / LD3)**: (Available for inference prediction status, e.g., "Yes").
+  * **RED LED (PE1 / LD2)**: (Available for inference prediction status, e.g., "No" or Error).
+
+## Audio Input Specifications
+To match the Google Speech Commands dataset used during training, the hardware must collect audio under the exact same specifications:
+* **Audio Source**: An analog microphone connected to the STM32's ADC (Analog-to-Digital Converter), specifically **ADC1 Channel 15**.
+* **Sampling Rate**: **16 kHz (16,000 samples per second)**. This is rigidly controlled by a hardware timer (**TIM1**) acting as a trigger for the ADC.
+* **Duration**: Exactly **1 second** (16,000 samples total).
+* **Format**: 16-bit unsigned integers (raw ADC values), which are then converted to 32-bit floats (`float32_t`) before being passed to the DSP layer.

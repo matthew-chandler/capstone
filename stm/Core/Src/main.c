@@ -200,8 +200,15 @@ int main(void)
 		  BSP_LED_Off(LED_YELLOW);
 
 		  // Prepare the buffer for the ML pipeline
+		  // ~24824 is the expected DC offset for a 1.25V bias on a 16-bit ADC reading 3.3V max
+		  const uint16_t DC_OFFSET = 24824; 
+
 		  for (int i = 0; i < 16000; i++) {
-			  full_audio[i] = (float32_t)record_buffer[i];
+			  // 1. Remove DC bias (cast to int32_t first to allow negative numbers)
+			  int32_t centered_sample = (int32_t)record_buffer[i] - DC_OFFSET; 
+			  
+			  // 2. Scale to roughly [-1.0, 1.0] matching the / 32768.0 in train.py
+			  full_audio[i] = (float32_t)centered_sample / 32768.0f; 
 		  }
 
 		  Process_Full_Audio();
@@ -479,11 +486,11 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PC13 */
-  GPIO_InitStruct.Pin = GPIO_PIN_13;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  /*Configure GPIO pin : button_Pin */
+  GPIO_InitStruct.Pin = button_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  HAL_GPIO_Init(button_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PB0 PB14 */
   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_14;
@@ -506,6 +513,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(button_EXTI_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(button_EXTI_IRQn);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 

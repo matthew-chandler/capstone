@@ -657,44 +657,44 @@
   ],
   "environment": {
     "generated_model": {
-      "generated_time": "2026-03-15T15:27:56-0700",
+      "generated_time": "2026-03-15T14:25:24-0700",
       "model_files": [
         {
           "name": "network_data_params.h",
-          "signature": "0x9ee78934dc8ac682b52dfb7e3c878dd0"
+          "signature": "0xf0876d684ca57bd583b71a93ccc1d830"
         },
         {
           "name": "network_data_params.c",
-          "signature": "0x6cef58d2fb667e079b99ece690592352"
+          "signature": "0xafeb0ec7f00150d13188fcdddeaf4a6e"
         },
         {
           "name": "network_data.h",
-          "signature": "0x2cbb6a17d159ad5bf31621ede71f4e8d"
+          "signature": "0xe4347b962defcbd8b152b3462d31e271"
         },
         {
           "name": "network_data.c",
-          "signature": "0xdb043620cda9b751432706ac27718ea7"
+          "signature": "0x169e31ee17d9a5418aead40730906381"
         },
         {
           "name": "network_config.h",
-          "signature": "0x9cf92e8f28b3d5b74feef2ef20106062"
+          "signature": "0x93f4ac3dc57cf9513285cd98301b0bc5"
         },
         {
           "name": "network.h",
-          "signature": "0xbb2d12e55ed069b61f9c923b28cc1ff0"
+          "signature": "0x85b2c1a1c6bc8355102781e401236480"
         },
         {
           "name": "network.c",
-          "signature": "0xd6400adc21de57802bc53bd5f4201d86"
+          "signature": "0x690a721011d9d00cd13f257c17cf9d23"
         }
       ],
       "name": "network"
     },
-    "network_signature": "0x4bcc840da7fc9c40",
+    "network_signature": "0x6957d2eeb1b1986f",
     "test_name": "",
     "tools": [
       {
-        "arguments": "generate --target stm32h7 --name network -m /Users/parth/Documents/vscode/capstone/python/kws_model.tflite --compression none --verbosity 1 -O time --workspace /var/folders/qm/hpw_80pn1ql4sq_b0lxl9jwh0000gn/T/mxAI_workspace30293746867283415102412471839166545 --output /Users/parth/.stm32cubemx/network_output",
+        "arguments": "generate --target stm32h7 --name network -m /Users/parth/Documents/vscode/capstone/python/kws_model.tflite --compression none --verbosity 1 -O time --workspace /var/folders/qm/hpw_80pn1ql4sq_b0lxl9jwh0000gn/T/mxAI_workspace2992691334128754328100664203189542 --output /Users/parth/.stm32cubemx/network_output",
         "environment": [
           "STATS_TYPE=X-CUBE-AI"
         ],

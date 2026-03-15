@@ -220,8 +220,13 @@ void EXTI15_10_IRQHandler(void)
   /* USER CODE BEGIN EXTI15_10_IRQn 0 */
 
   /* USER CODE END EXTI15_10_IRQn 0 */
-  BSP_PB_IRQHandler(BUTTON_USER);
+//  HAL_EXTI_IRQHandler(&H_EXTI_13);
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
+	// 1. Manually clear the hardware pending register for Pin 13
+	  __HAL_GPIO_EXTI_CLEAR_IT(USER_BUTTON_Pin);
+
+	  // 2. Force the callback to run and explicitly pass Pin 13
+	  HAL_GPIO_EXTI_Callback(USER_BUTTON_Pin);
 
   /* USER CODE END EXTI15_10_IRQn 1 */
 }

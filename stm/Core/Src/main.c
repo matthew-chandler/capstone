@@ -58,11 +58,12 @@ DMA_HandleTypeDef hdma_adc1;
 CRC_HandleTypeDef hcrc;
 
 TIM_HandleTypeDef htim1;
+TIM_HandleTypeDef htim6;
 
 /* USER CODE BEGIN PV */
 //float v_print = 0.0;
 //volatile uint16_t adc_buffer[ADC_BUF_LEN];
-volatile uint8_t adc_buffer_filled = 0;
+//volatile uint8_t adc_buffer_filled = 0;
 //float complex_array[ADC_BUF_LEN * 2];
 //float complex_array_256[256 * 2];
 //float complex_array_odd[ADC_BUF_LEN * 2];
@@ -74,6 +75,9 @@ volatile uint8_t adc_buffer_filled = 0;
 //float fft_2d_magnitude[64][64];
 
 extern float32_t full_audio[AUDIO_LENGTH];
+uint16_t raw_adc_buffer[16000];
+volatile uint8_t recording_complete = 0;
+volatile uint8_t button_pressed = 0;
 
 /* USER CODE END PV */
 
@@ -85,6 +89,7 @@ static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_CRC_Init(void);
+static void MX_TIM6_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -138,6 +143,7 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM1_Init();
   MX_CRC_Init();
+  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
 
   if (HAL_ADCEx_Calibration_Start(&hadc1, ADC_CALIB_OFFSET, ADC_SINGLE_ENDED) != HAL_OK) {
@@ -145,7 +151,6 @@ int main(void)
   }
 
   HAL_TIM_Base_Start(&htim1);
-
 
   /* USER CODE END 2 */
 
@@ -175,21 +180,57 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  Init_Audio_Pipeline_Full();
-	  AI_Init();
+	  if (button_pressed) {
+		  recording_complete = 0;
 
-	  // copy over test array
-	  for(int i = 0; i < 16000; i++) {
-		full_audio[i] = TEST_AUDIO_UNKNOWN[i];
+		  // turn on adc & dma first
+		  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)raw_adc_buffer, 16000);
+
+		  // start the timer
+		  HAL_TIM_Base_Start(&htim6);
+
+		  // wait until the adc buffer is filled
+		  while (!recording_complete) {
+
+		  }
+
+		  // at this point, we're done recording, and the adc+timer have turned off
+
+		  uint64_t sum = 0;
+		  for(int i = 0; i < 16000; i++) {
+		      sum += raw_adc_buffer[i];
+		  }
+		  float dc_bias = (float)sum / 16000.0f;
+
+		  // 2. Remove Bias, Normalize to [-1.0, 1.0], and copy to the AI buffer
+		  for(int i = 0; i < 16000; i++) {
+		      // Subtract the center, then scale by half the 16-bit max
+		      full_audio[i] = ((float)raw_adc_buffer[i] - dc_bias) / 32768.0f;
+		  }
+
+		  // 3. Run the pipeline!
+		  Process_Full_Audio();
+		  Run_AI_Inference();
+
+		  button_pressed = 0;
 	  }
 
-	  Process_Full_Audio();
+//
+//	  Init_Audio_Pipeline_Full();
+//	  AI_Init();
+//
+//	  // copy over test array
+//	  for(int i = 0; i < 16000; i++) {
+//		full_audio[i] = TEST_AUDIO_UNKNOWN[i];
+//	  }
+//
+//	  Process_Full_Audio();
+//
+//	  Run_AI_Inference();
 
-	  Run_AI_Inference();
-
-	  while (1) {
-
-	  }
+//	  while (1) {
+//
+//	  }
   }
   /* USER CODE END 3 */
 }
@@ -274,7 +315,7 @@ static void MX_ADC1_Init(void)
   /** Common config
   */
   hadc1.Instance = ADC1;
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV2;
   hadc1.Init.Resolution = ADC_RESOLUTION_16B;
   hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
@@ -282,7 +323,7 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ContinuousConvMode = DISABLE;
   hadc1.Init.NbrOfConversion = 1;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
-  hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIG_T1_TRGO;
+  hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIG_T6_TRGO;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_RISING;
   hadc1.Init.ConversionDataManagement = ADC_CONVERSIONDATA_DMA_ONESHOT;
   hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
@@ -306,7 +347,7 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_15;
   sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_810CYCLES_5;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
   sConfig.OffsetNumber = ADC_OFFSET_NONE;
   sConfig.Offset = 0;
@@ -400,6 +441,44 @@ static void MX_TIM1_Init(void)
 }
 
 /**
+  * @brief TIM6 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM6_Init(void)
+{
+
+  /* USER CODE BEGIN TIM6_Init 0 */
+
+  /* USER CODE END TIM6_Init 0 */
+
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM6_Init 1 */
+
+  /* USER CODE END TIM6_Init 1 */
+  htim6.Instance = TIM6;
+  htim6.Init.Prescaler = 25-1;
+  htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim6.Init.Period = 95-1;
+  htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM6_Init 2 */
+
+  /* USER CODE END TIM6_Init 2 */
+
+}
+
+/**
   * Enable DMA controller clock
   */
 static void MX_DMA_Init(void)
@@ -441,11 +520,11 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PC13 */
-  GPIO_InitStruct.Pin = GPIO_PIN_13;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  /*Configure GPIO pin : USER_BUTTON_Pin */
+  GPIO_InitStruct.Pin = USER_BUTTON_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  HAL_GPIO_Init(USER_BUTTON_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PB0 PB14 */
   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_14;
@@ -469,6 +548,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(USER_BUTTON_EXTI_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(USER_BUTTON_EXTI_IRQn);
+
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
   /* USER CODE END MX_GPIO_Init_2 */
@@ -477,11 +560,11 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-    if (HAL_ADC_Stop_DMA(&hadc1) != HAL_OK) {
-        Error_Handler();
-    }
-
-    adc_buffer_filled = 1;
+	if(hadc->Instance == ADC1) {
+		recording_complete = 1;       // Set our flag
+		HAL_TIM_Base_Stop(&htim6);    // Stop the timer
+		HAL_ADC_Stop_DMA(&hadc1);     // Stop the ADC/DMA
+	}
 }
 
 int _write(int file, char *ptr, int len)
@@ -491,6 +574,16 @@ int _write(int file, char *ptr, int len)
 		ITM_SendChar((*ptr++));
 	}
 	return len;
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+	switch (GPIO_Pin) {
+	case USER_BUTTON_Pin: {
+		button_pressed = 1;
+//		HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
+		break;
+	}
+	}
 }
 /* USER CODE END 4 */
 

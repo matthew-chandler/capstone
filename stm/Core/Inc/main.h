@@ -63,6 +63,8 @@ void Error_Handler(void);
 #define USER_BUTTON_Pin GPIO_PIN_13
 #define USER_BUTTON_GPIO_Port GPIOC
 #define USER_BUTTON_EXTI_IRQn EXTI15_10_IRQn
+#define YES_LED_Pin GPIO_PIN_0
+#define YES_LED_GPIO_Port GPIOC
 #define MIC_IN_Pin GPIO_PIN_3
 #define MIC_IN_GPIO_Port GPIOA
 #define JTMS_Pin GPIO_PIN_13

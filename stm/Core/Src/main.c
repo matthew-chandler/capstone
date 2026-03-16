@@ -75,8 +75,11 @@ TIM_HandleTypeDef htim6;
 //float fft_2d_magnitude[64][64];
 
 extern float32_t full_audio[AUDIO_LENGTH];
+extern volatile float32_t ai_out_data[3];
+
 uint16_t raw_adc_buffer[16000];
-volatile uint8_t recording_complete = 0;
+volatile uint8_t half_transfer_ready = 0;
+volatile uint8_t full_transfer_ready = 0;
 volatile uint8_t button_pressed = 0;
 
 /* USER CODE END PV */
@@ -152,6 +155,13 @@ int main(void)
 
   HAL_TIM_Base_Start(&htim1);
 
+  // Start the background DMA recording infinitely
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)raw_adc_buffer, 16000);
+  HAL_TIM_Base_Start(&htim6);
+
+  Init_Audio_Pipeline_Full();
+  AI_Init();
+
   /* USER CODE END 2 */
 
   /* Initialize leds */
@@ -180,39 +190,90 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  if (button_pressed) {
-		  recording_complete = 0;
 
-		  // turn on adc & dma first
-		  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)raw_adc_buffer, 16000);
+	  // ==========================================
+		// SCENARIO A: The First Half just finished
+		// ==========================================
+		if (half_transfer_ready) {
+			half_transfer_ready = 0;
 
-		  // start the timer
-		  HAL_TIM_Base_Start(&htim6);
+			// Calculate DC Bias for the whole buffer
+			uint64_t sum = 0;
+			for(int i = 0; i < 16000; i++) sum += raw_adc_buffer[i];
+			float dc_bias = (float)sum / 16000.0f;
 
-		  // wait until the adc buffer is filled
-		  while (!recording_complete) {
+			// Stitch chronologically: [Older Second Half] + [New First Half]
+			int out_idx = 0;
+			for(int i = 8000; i < 16000; i++) {
+				full_audio[out_idx++] = ((float)raw_adc_buffer[i] - dc_bias) / 32768.0f;
+			}
+			for(int i = 0; i < 8000; i++) {
+				full_audio[out_idx++] = ((float)raw_adc_buffer[i] - dc_bias) / 32768.0f;
+			}
 
-		  }
+			Process_Full_Audio();
+			Run_AI_Inference();
+		}
 
-		  // at this point, we're done recording, and the adc+timer have turned off
+		// ==========================================
+		// SCENARIO B: The Second Half just finished
+		// ==========================================
+		if (full_transfer_ready) {
+			full_transfer_ready = 0;
 
-		  uint64_t sum = 0;
-		  for(int i = 0; i < 16000; i++) {
-		      sum += raw_adc_buffer[i];
-		  }
-		  float dc_bias = (float)sum / 16000.0f;
+			// Calculate DC Bias for the whole buffer
+			uint64_t sum = 0;
+			for(int i = 0; i < 16000; i++) sum += raw_adc_buffer[i];
+			float dc_bias = (float)sum / 16000.0f;
 
-		  // 2. Remove Bias, Normalize to [-1.0, 1.0], and copy to the AI buffer
-		  for(int i = 0; i < 16000; i++) {
-		      // Subtract the center, then scale by half the 16-bit max
-		      full_audio[i] = ((float)raw_adc_buffer[i] - dc_bias) / 32768.0f;
-		  }
+			// The array is already in chronological order: [Old First Half] + [New Second Half]
+			for(int i = 0; i < 16000; i++) {
+				full_audio[i] = ((float)raw_adc_buffer[i] - dc_bias) / 32768.0f;
+			}
 
-		  // 3. Run the pipeline!
-		  Process_Full_Audio();
-		  Run_AI_Inference();
+			Process_Full_Audio();
+			Run_AI_Inference();
+		}
 
-		  button_pressed = 0;
+//	  if (button_pressed) {
+//		  recording_complete = 0;
+//
+//		  // turn on adc & dma first
+//		  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)raw_adc_buffer, 16000);
+//
+//		  // start the timer
+//		  HAL_TIM_Base_Start(&htim6);
+//
+//		  // wait until the adc buffer is filled
+//		  while (!recording_complete) {
+//
+//		  }
+//
+//		  // at this point, we're done recording, and the adc+timer have turned off
+//
+//		  uint64_t sum = 0;
+//		  for(int i = 0; i < 16000; i++) {
+//		      sum += raw_adc_buffer[i];
+//		  }
+//		  float dc_bias = (float)sum / 16000.0f;
+//
+//		  // 2. Remove Bias, Normalize to [-1.0, 1.0], and copy to the AI buffer
+//		  for(int i = 0; i < 16000; i++) {
+//		      // Subtract the center, then scale by half the 16-bit max
+//		      full_audio[i] = ((float)raw_adc_buffer[i] - dc_bias) / 32768.0f;
+//		  }
+//
+//		  // 3. Run the pipeline!
+//		  Process_Full_Audio();
+//		  Run_AI_Inference();
+//
+//		  button_pressed = 0;
+//	  }
+//
+	  if (ai_out_data[0] > 0.3) {
+		  HAL_GPIO_WritePin(YES_LED_GPIO_Port, YES_LED_Pin, GPIO_PIN_SET);
+	  } else {
+		  HAL_GPIO_WritePin(YES_LED_GPIO_Port, YES_LED_Pin, GPIO_PIN_RESET);
 	  }
 
 //
@@ -325,8 +386,8 @@ static void MX_ADC1_Init(void)
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIG_T6_TRGO;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_RISING;
-  hadc1.Init.ConversionDataManagement = ADC_CONVERSIONDATA_DMA_ONESHOT;
-  hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
+  hadc1.Init.ConversionDataManagement = ADC_CONVERSIONDATA_DMA_CIRCULAR;
+  hadc1.Init.Overrun = ADC_OVR_DATA_OVERWRITTEN;
   hadc1.Init.LeftBitShift = ADC_LEFTBITSHIFT_NONE;
   hadc1.Init.OversamplingMode = DISABLE;
   hadc1.Init.Oversampling.Ratio = 1;
@@ -515,6 +576,9 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOE_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(YES_LED_GPIO_Port, YES_LED_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_14, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
@@ -525,6 +589,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(USER_BUTTON_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : YES_LED_Pin */
+  GPIO_InitStruct.Pin = YES_LED_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(YES_LED_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PB0 PB14 */
   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_14;
@@ -558,15 +629,19 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
-{
-	if(hadc->Instance == ADC1) {
-		recording_complete = 1;       // Set our flag
-		HAL_TIM_Base_Stop(&htim6);    // Stop the timer
-		HAL_ADC_Stop_DMA(&hadc1);     // Stop the ADC/DMA
-	}
+// Fires when indices 0-7999 are just filled (0.5 seconds in)
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc) {
+    if(hadc->Instance == ADC1) {
+        half_transfer_ready = 1;
+    }
 }
 
+// Fires when indices 8000-15999 are just filled (1.0 seconds in)
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
+    if(hadc->Instance == ADC1) {
+        full_transfer_ready = 1;
+    }
+}
 int _write(int file, char *ptr, int len)
 {
 	int i = 0;

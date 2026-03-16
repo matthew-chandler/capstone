@@ -1,6 +1,6 @@
 ST Edge AI Core v2.2.0-20266 2adc00962
-Created date          : 2026-03-15 15:27:57
-Parameters            : generate --target stm32h7 --name network -m /Users/parth/Documents/vscode/capstone/python/kws_model.tflite --compression none --verbosity 1 -O time --workspace /var/folders/qm/hpw_80pn1ql4sq_b0lxl9jwh0000gn/T/mxAI_workspace30293746867283415102412471839166545 --output /Users/parth/.stm32cubemx/network_output
+Created date          : 2026-03-15 17:18:14
+Parameters            : generate --target stm32h7 --name network -m /Users/parth/Documents/vscode/capstone/python/kws_model.tflite --compression none --verbosity 1 -O time --workspace /var/folders/qm/hpw_80pn1ql4sq_b0lxl9jwh0000gn/T/mxAI_workspace30726492566387517959126076250231674 --output /Users/parth/.stm32cubemx/network_output
 
 Exec/report summary (generate)
 ----------------------------------------------------------------------------------------------------------------------------
@@ -11,7 +11,7 @@ compression        :   none
 options            :   allocate-inputs, allocate-outputs                                                                    
 optimization       :   time                                                                                                 
 target/series      :   stm32h7                                                                                              
-workspace dir      :   /var/folders/qm/hpw_80pn1ql4sq_b0lxl9jwh0000gn/T/mxAI_workspace30293746867283415102412471839166545   
+workspace dir      :   /var/folders/qm/hpw_80pn1ql4sq_b0lxl9jwh0000gn/T/mxAI_workspace30726492566387517959126076250231674   
 output dir         :   /Users/parth/.stm32cubemx/network_output                                                             
 model_fmt          :   float                                                                                                
 model_name         :   kws_model                                                                                            

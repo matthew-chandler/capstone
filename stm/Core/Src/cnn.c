@@ -22,7 +22,7 @@ ai_buffer *ai_input;
 ai_buffer *ai_output;
 
 // 3. The array to hold the final probabilities [Yes, No, Unknown]
-float32_t ai_out_data[3];
+volatile float32_t ai_out_data[3];
 
 // allocate data for calculations for the cnn
 AI_ALIGNED(32) static ai_u8 activations_buffer[AI_NETWORK_DATA_ACTIVATIONS_SIZE];
